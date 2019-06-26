@@ -1,0 +1,17 @@
+{
+  "env": {
+    "name": "DEV"
+  },
+  "information": {
+    "message": "Development JSON message"
+  },
+  "defaultBackend": "fs",
+  "backendConfigs": {
+    "s3": {
+      "uri": "s3://example/devBucket"
+    },
+    "fs": {
+      "uri": "/mnt/temp/"
+    }
+  }
+}

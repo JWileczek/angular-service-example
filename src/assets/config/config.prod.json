@@ -1,0 +1,17 @@
+{
+  "env": {
+    "name": "PROD"
+  },
+  "information": {
+    "message": "Production Important JSON message"
+  },
+  "defaultBackend": "s3",
+  "backendConfigs": {
+    "s3": {
+      "uri": "s3://example/devBucket"
+    },
+    "fs": {
+      "uri": "/mnt/temp/"
+    }
+  }
+}
