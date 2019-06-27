@@ -1,6 +1,6 @@
-import {BackendStorageStrategy} from '../storage.service';
+import {BackendStorageInterface} from '../storage.service';
 
-export class S3Strategy implements BackendStorageStrategy {
+export class S3Backend implements BackendStorageInterface {
   s3Config: any;
 
   constructor(config: any) {

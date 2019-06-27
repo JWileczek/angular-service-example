@@ -1,6 +1,6 @@
-import {BackendStorageStrategy} from '../storage.service';
+import {BackendStorageInterface} from '../storage.service';
 
-export class FilesystemStrategy implements BackendStorageStrategy {
+export class FilesystemStrategy implements BackendStorageInterface {
   fsConfig: any;
 
   constructor(config: any) {

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {storageFactory} from './storage.provider';
+import {storageDefaultProvider} from './storage.provider';
 
-export interface BackendStorageStrategy {
+export interface BackendStorageInterface {
   connect(): boolean;
 
   getItem(path: string): any;
@@ -11,9 +11,9 @@ export interface BackendStorageStrategy {
 
 @Injectable({
   providedIn: 'root',
-  useFactory: storageFactory
+  useFactory: storageDefaultProvider.useFactory
 })
-export abstract class StorageService implements BackendStorageStrategy {
+export abstract class StorageService implements BackendStorageInterface {
 
   abstract connect(): boolean;
 
