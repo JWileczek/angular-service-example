@@ -1,6 +1,6 @@
 import {StorageService} from './storage.service';
 import {AppConfigService} from '../../app.config';
-import {FilesystemStrategy} from './Backends/file.backend';
+import {FileSystemBackend} from './Backends/file.backend';
 import {S3Backend} from './Backends/s3.backend';
 
 export enum StorageBackends {
@@ -18,7 +18,7 @@ const storageFactory = () => {
       break;
     }
     case StorageBackends.FS: {
-      backend = new FilesystemStrategy(backendConfig);
+      backend = new FileSystemBackend(backendConfig);
       break;
     }
   }

@@ -7,7 +7,6 @@ import {RandomMsgService} from '../../services/random-message.service';
   styleUrls: ['./eager-msg.component.css']
 })
 export class EagerMsgComponent implements OnInit {
-  private storageMsg: any;
   private randomMsg: string;
 
   constructor(private randomMessageService: RandomMsgService) {
