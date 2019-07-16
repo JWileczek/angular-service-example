@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Insert title here</title>
+</head>
+<body>
+<script type="text/javascript" src="amq/amq.js"></script>
+<script type="text/javascript">amq.uri = 'amq/';</script>
+<script type="text/javascript" src="./newInfra.js"></script>
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript">
+  //bigtest
+  var flipflop = 1;
+
+  function bigtest() {
+    console("Testing Method funtionality<br>");
+    Infrastructure.addPollHandler(function () {
+      flipflop = 1 - flipflop;
+      if ((flipflop) == 0) {
+        document.getElementById("pollstatus").style.background = "green";
+      } else {
+        document.getElementById("pollstatus").style.background = "red";
+      }
+
+    });
+
+    console("AddPollHandler... verify  green red flip-flop<br>");
+    console("Testing Method funtionality<br>");
+    console("Testing Method funtionality<br>");
+  }
+</script>
+
+<table>
+  <tr>
+    <td><b>Inputs</b>
+  </tr>
+
+  <tr>
+    <td>Message ID:</td>
+    <td><INPUT TYPE="text" id="messID" SIZE=25></td>
+    <td><INPUT TYPE="button" NAME="subscribeButton" VALUE="Send Message" ONCLICK="sendMessage()"></td>
+  </tr>
+
+  <tr>
+    <td>Destination (URL):</td>
+    <td><INPUT TYPE="text" id="dest" SIZE=25></td>
+  </tr>
+
+  <tr>
+    <td>replyTo</td>
+    <td><INPUT TYPE="text" id="reply" SIZE=25></td>
+  </tr>
+
+  <tr>
+    <td>Data(json):</td>
+    <td><INPUT TYPE="text" id="data" SIZE=25></td>
+  </tr>
+
+  <tr>
+    <td>EVAL:</td>
+    <td><INPUT TYPE="text" id="evalBox" SIZE=25></td>
+    <td><INPUT TYPE="button" NAME="evaluat" VALUE="evaluate" ONCLICK="myevaluate()"></td>
+  </tr>
+  <tr>
+    <td>
+      <INPUT TYPE="button" NAME="bigTest" VALUE="Big Test" ONCLICK="bigTest()">
+    </td>
+  </tr>
+</table>
+<br>
+<br>
+Poll status Used for Big Test:
+
+<div id="pollstatus" style="width:30px; height: 30px; background:green;">
+
+</div>
+<br>
+<div id="console" style="border : solid 2px #ff0000; height: 400px; width:600px; overflow : auto;">
+
+</div>
+
+<script type="text/javascript">
+  Infrastructure.debug = true;
+  Infrastructure.setErrorHandler(console);
+  Infrastructure.setListener(Infrastructure.Messages.IDS.CONFIGURATIONSTATUSLIST, Infrastructure.Topics.CONFIGURATION_STATUS_UPDATE, reverseJson);
+  Infrastructure.initialize("stp/s", reverseJson);
+
+
+  function reverseJson(obj) {
+    console(Object.toJSON(obj));
+  }
+
+  function sendMessage() {
+    var tester = {
+      id: 'CONFIGURATIONSTATUSLIST',
+      destination: 'ECLIPSE.CCTS.ConfigStatus.ConfigurationList',
+      replyTo: 'test',
+      configurations: [{
+        type: 'Jw1',
+        mode: 'null',
+        id: 'null',
+        node: 'Node1',
+        state: 'Terminating',
+        offsetSec: '15',
+        description: 'ECLIPSE.CCTS.ConfigStatus.ConfigurationList',
+        area: 'null',
+        phase: 'null'
+      }]
+    }
+    console(Object.toJSON(tester));
+    var dest = get("dest");
+    var id = get("messID");
+    var reply = get("reply");
+    var dataText = get("data");
+    console("Sending: dest:" + dest + " id:" + id + " reply:" + reply + " data:" + dataText);
+    try {
+      Infrastructure.sendMessage({"destination": dest, "id": id, "reply": reply}, true, console);
+    } catch (e) {
+      console("Error: " + e + "  <br>Error Code: " + e.errorCode);
+    }
+  }
+
+
+  function get(textBoxName) {
+    var myElement = document.getElementById(textBoxName);
+    return myElement.value;
+  }
+
+  function console(text) {
+    document.getElementById("console").innerHTML += text + "<br>";
+  }
+
+  function myevaluate() {
+    try {
+      console("s:" + document.getElementById("evalBox").value + ":e");
+      var a = eval(document.getElementById("evalBox").value);
+      console(a);
+    } catch (e) {
+      console(e);
+    }
+  }
+
+  var count = 0;
+
+  function countMessages() {
+    count++;
+  }
+
+  function unitTest() {
+    console("Testing Pollhandler Through out test poll status should flip flop on polls");
+    Infrastructure.addPollHandler(function () {
+      flipflop = 1 - flipflop;
+      if ((flipflop) == 0) {
+        document.getElementById("pollstatus").style.background = "green";
+      } else {
+        document.getElementById("pollstatus").style.background = "red";
+      }
+    });
+
+    var a = Infrastructure._evaluate("{id:'goodid',data:'data'}");
+
+    if (a.id == "goodid" && a.data == "data") {
+      console("Test Successful");
+    } else {
+      console("Failure");
+      return false;
+    }
+
+    console("Testing Evaluate method");
+
+    console("In unit test");
+    return true;
+  }
+
+  function stabilityTest() {
+    console("in stability test");
+    return true;
+  }
+
+  function exceptionTest() {
+    console("in exception");
+    return true;
+  }
+
+  function dissconnectTest() {
+    console("clearing console");
+    return true;
+  }
+
+  function bigTest() {
+    console("clearing console");
+    alert("clearing console");
+    //Unit test of all methods
+    console("<h2>Running Method unit test</h2>");
+    unitTest();
+
+    //Exception handling
+    console("<h2>Running Exception handling test</h2>");
+    exceptionTest();
+
+    //Stability
+    console("<h2>Running Stability  test</h2>");
+    stabilityTest();
+
+    //Dissconnect handler
+    console("<h2>Running disconnect handler test</h2>");
+    dissconnectTest();
+
+  }
+
+</script>
+</body>
+</html>
