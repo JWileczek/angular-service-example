@@ -10,7 +10,7 @@
   } else {
     // Browser globals (root is window)
     var module = factory();
-    root.Infrastructure = new module.Infrastructure();
+    root.Infrastructure = module;
   }
 }(typeof self !== 'undefined' ? self : this, function () {
 
@@ -100,7 +100,7 @@
         amq.addPollHandler(func);
       } catch (e) {
         throw {
-          errorCode: Infrastructure.Errors.UNKNOWNERROR,
+          errorCode: Errors.UNKNOWNERROR,
           toString: function () {
             return e.toString();
           }
@@ -130,7 +130,7 @@
             toString: function () {
               return eString;
             },
-            errorCode: Infrastructure.Errors.JSONERROR
+            errorCode: Errors.JSONERROR
           }
         this._errror(err);
       }
@@ -148,7 +148,7 @@
      */
     _sendMessage(id, destination, jsontext, callback, reply, noEval) {
 
-      if (Infrastructure.Messages.IDS.LOGOUT == id) {
+      if (Messages.IDS.LOGOUT == id) {
         this.LoggedOut = true;
       }
 
@@ -161,7 +161,7 @@
           if (response != null) {
             var json = response.firstChild.nodeValue;
           } else {
-            self._errror(Infrastructure.Errors.UNDEFINEDMESSAGE);
+            self._errror(Errors.UNDEFINEDMESSAGE);
           }
           var evaledJSON = this._evaluate(json);
           if (evaledJSON != null)
@@ -203,7 +203,7 @@
      * @throws          Sync Error/Async Error
      */
     _sendSyncMessage(id, destination, jsontext, callback, reply, noEval) {
-      if (Infrastructure.Messages.IDS.LOGOUT == id) {
+      if (Messages.IDS.LOGOUT == id) {
         this.LoggedOut = true;
       }
 
@@ -217,7 +217,7 @@
           if (response != null) {
             var json = response.responseText;
           } else {
-            self._errror(Infrastructure.Errors.UNDEFINEDMESSAGE);
+            self._errror(Errors.UNDEFINEDMESSAGE);
           }
           var evaledJSON = this._evaluate(json);
           if (evaledJSON != null)
@@ -263,7 +263,7 @@
         try {
           var jsontext = (Object.toJSON(message));
         } catch (e) {
-          throw Infrastructure.Exceptions.JSONERROR;
+          throw Exceptions.JSONERROR;
         }
         //end turn var into json
         if (message.destination != null && message.id != null) {
@@ -274,14 +274,14 @@
           }
         } else {
           throw ({
-            errorCode: Infrastructure.Errors.INVALIDMESSAGEFORMAT,
+            errorCode: Errors.INVALIDMESSAGEFORMAT,
             toString: function () {
               return "Invalid Message Format-- Message Must Have an ID and Destination";
             }
           });
         }
       } else {
-        throw (Infrastructure.Exceptions.INVALIDMESSAGEFORMAT());
+        throw (Exceptions.INVALIDMESSAGEFORMAT());
       }
     }
 
@@ -326,7 +326,7 @@
       var self = this;
       var evaluatedHandler = function (message) {
         var msgObj = self._evaluate(message);
-        if (msgObj.id == Infrastructure.Messages.IDS.SERVLET_ERROR) {
+        if (msgObj.id == Messages.IDS.SERVLET_ERROR) {
           self.stop();
         }
         handler(msgObj);
@@ -358,7 +358,7 @@
       }
       for (var i = 0; i < this.initialized.length; i++) {
         //Note that the id does not matter in this case only the topic
-        this.sendMessage(Infrastructure.Messages.Constructors.CLIENTCLOSEMESSAGE(this.initialized[i], this.clientID), true, (function () {
+        this.sendMessage(Messages.Constructors.CLIENTCLOSEMESSAGE(this.initialized[i], this.clientID), true, (function () {
         }));
       }
       if (this.debug === true) {
@@ -427,7 +427,7 @@
     connectionError() {
       this.serverConnected = false;
       this.generateTransportErrorPrompt();
-      this.errorHandler(Infrastructure.Exceptions.DISCONNECTION);
+      this.errorHandler(Exceptions.DISCONNECTION);
       this.stop();
 
     }
@@ -500,7 +500,7 @@
           }
           //end fix for tomcat bug.
         } else {
-          self._errror(Infrastructure.Errors.UNDEFINEDMESSAGE);
+          self._errror(Errors.UNDEFINEDMESSAGE);
         }
 
         var evaledJSON = self._evaluate(json);
@@ -528,9 +528,9 @@
      */
     RequestFileList(servletURL, callback, type, path) {
 
-      var m = Infrastructure.Messages.Constructors.FileListRequest(servletURL, this.clientID, type, path);
+      var m = Messages.Constructors.FileListRequest(servletURL, this.clientID, type, path);
       this.sendMessage(m, true, function (r) {
-        if (r.id == Infrastructure.Messages.IDS.FILE_LIST_RESPONSE) {
+        if (r.id == Messages.IDS.FILE_LIST_RESPONSE) {
           callback(r.fileList);
         } else {
           throw r;
@@ -539,9 +539,9 @@
     }
 
     RtlInitRequest(servletURL, callback) {
-      var m = Infrastructure.Messages.Constructors.RtlInitRequest(servletURL, this.clientID);
+      var m = Messages.Constructors.RtlInitRequest(servletURL, this.clientID);
       this.sendMessage(m, true, function (r) {
-        if (r.id == Infrastructure.Messages.IDS.RTL_UPDATE) {
+        if (r.id == Messages.IDS.RTL_UPDATE) {
           callback(r);
         } else {
           throw r;
@@ -550,9 +550,9 @@
     }
 
     FswInitRequest(servletURL, callback) {
-      var m = Infrastructure.Messages.Constructors.FswInitRequest(servletURL, this.clientID);
+      var m = Messages.Constructors.FswInitRequest(servletURL, this.clientID);
       this.sendMessage(m, true, function (r) {
-        if (r.id == Infrastructure.Messages.IDS.FSW_UPDATE) {
+        if (r.id == Messages.IDS.FSW_UPDATE) {
           callback(r);
         } else {
           throw r;
@@ -561,13 +561,13 @@
     }
 
     CecilInitRequest(servletURL, instanceType, instanceNum) {
-      var m = Infrastructure.Messages.Constructors.CecilInitRequest(servletURL, this.clientID, instanceType, instanceNum);
+      var m = Messages.Constructors.CecilInitRequest(servletURL, this.clientID, instanceType, instanceNum);
       this.sendMessage(m, false, function (r) {
       });
     }
 
     CecilStopRequest(servletURL, instanceType, instanceNum) {
-      var m = Infrastructure.Messages.Constructors.CecilStopRequest(servletURL, this.clientID, instanceType, instanceNum);
+      var m = Messages.Constructors.CecilStopRequest(servletURL, this.clientID, instanceType, instanceNum);
       this.sendMessage(m, false, function (r) {
       });
     }
@@ -624,7 +624,7 @@
         dir = "";
       }
       var filename_clean = encodeURIComponent(filename);
-      var m = Infrastructure.Messages.Constructors.DomFileRequest(servletURL, this.clientID, type, filename_clean, dir);
+      var m = Messages.Constructors.DomFileRequest(servletURL, this.clientID, type, filename_clean, dir);
       var self = this;
       var breakpointcallback = function (m) {
         try {
@@ -644,102 +644,6 @@
       };
       this.sendMessage(m, true, breakpointcallback, true);
     }
-
-    Errors = {
-      UNKNOWNERROR: -1,
-      JSONERROR: 1,
-      UNDEFINEDMESSAGE: 2,
-      NODATA: 3,
-      INVALIDMESSAGEFORMAT: 4,
-      DISCONNECTION: 5,
-      ServletErrors: {
-        UNKNOWN_ERROR: 1000,
-        INFRASTRUCTURE_ERROR: 1001,
-        ECLIPSE_INTERFACE_ERROR: 1002,
-        SERVLET_ENVIRONMENT_ERROR: 1003
-      }
-    };
-
-    Exceptions = {
-      UNKNOWNERROR:
-        {
-          errorText: "Unknown Error",
-          toString: function () {
-            return "Unknown Error";
-          },
-          errorCode: Infrastructure.Errors.UNKNOWNERROR
-        },
-      JSONERROR:
-        {
-          errorText: "JSON Converstion Error!",
-          toString: function () {
-            return "JSON Converstion Error!";
-          },
-          errorCode: Infrastructure.Errors.JSONERROR
-        },
-      UNDEFINEDMESSAGE:
-        {
-          errorText: "Undefined Message Type!",
-          toString: function () {
-            return "Undefined Message Type!";
-          },
-          errorCode: Infrastructure.Errors.UNDEFINEDMESSAGE
-        },
-      NODATA:
-        {
-          errorText: "Data Field was empty!",
-          toString: function () {
-            return "Data Field was empty!";
-          },
-          errorCode: Infrastructure.Errors.NODATA
-        },
-      INVALIDMESSAGEFORMAT:
-        {
-          errorText: "Invalid Message Format!",
-          toString: function () {
-            return "Invalid Message Format!";
-          },
-          errorCode: Infrastructure.Errors.INVALIDMESSAGEFORMAT
-        },
-      DISCONNECTION:
-        {
-          errorText: "The connection to the server has been lost! No further Updates will be Processed.",
-          toString: function () {
-            return "The connection to the server has been lost! No further Updates will be Processed.";
-          },
-          errorCode: Infrastructure.Errors.INVALIDMESSAGEFORMAT
-        }
-    };
-
-    static Messages = {
-      IDS: {
-        CONFIGURATIONSTATUSLIST: "CONFIGURATIONSTATUSLIST",
-        SERVLET_ERROR: "SERVLET_ERROR",
-        CLIENTCLOSE: "CLIENTCLOSE",
-        LOGOUT: "LOGOUT",
-        MEASURAND_SUBSCRIBE_REQUEST: "MEASURAND_SUBSCRIBE_REQUEST",
-        MEASURAND_DESUBSCRIBE_REQUEST: "MEASURAND_DESUBSCRIBE_REQUEST",
-        MEASURAND_ATTRIBUTE_UPDATE: "MEASURAND_ATTRIBUTE_UPDATE",
-        DOM_FILE_REQUEST: "DOM_FILE_REQUEST",
-        FILE_LIST_REQUEST: "FILE_LIST_REQUEST",
-        FILE_LIST_RESPONSE: "FILE_LIST_RESPONSE",
-        HISTORY_RETREIVAL_REQUEST: "HISTORY_RETREIVAL_REQUEST",
-        FILE_UPDATE_MESSAGE: "FILE_UPDATE_MESSAGE",
-        RTL_INIT_REQUEST: "RTL_INIT_REQUEST",
-        RTL_UPDATE: "RTL_UPDATE",
-        FSW_INIT_REQUEST: "FSW_INIT_REQUEST",
-        FSW_UPDATE: "FSW_UPDATE",
-        CECIL_PROC_OUTPUT_UPDATE: "CECIL_PROC_OUTPUT_UPDATE",
-        CECIL_PROC_STATUS_UPDATE: "CECIL_PROC_STATUS_UPDATE",
-        CECIL_KEYPRESS_UPDATE: "CECIL_KEYPRESS_UPDATE",
-        CECIL_INIT_REQUEST: "CECIL_INIT_REQUEST",
-        CECIL_LINE_STATUS_UPDATE: "CECIL_LINE_STATUS_UPDATE",
-        CECIL_STOP_REQUEST: "CECIL_STOP_REQUEST",
-        TRANSPORT_INTERRUPTED: "TRANSPORT_INTERRUPTED",
-        TRANSPORT_INTERRUPTED_STP: "TRANSPORT_INTERRUPTED_STP"
-      },
-      Constructors: {},
-    };
 
     //CHANGE: Difference in access
     Topics() {
@@ -778,6 +682,242 @@
     }
   }
 
+  var Errors = {
+    UNKNOWNERROR: -1,
+    JSONERROR: 1,
+    UNDEFINEDMESSAGE: 2,
+    NODATA: 3,
+    INVALIDMESSAGEFORMAT: 4,
+    DISCONNECTION: 5,
+    ServletErrors: {
+      UNKNOWN_ERROR: 1000,
+      INFRASTRUCTURE_ERROR: 1001,
+      ECLIPSE_INTERFACE_ERROR: 1002,
+      SERVLET_ENVIRONMENT_ERROR: 1003
+    }
+  };
+
+  var Messages = {IDS: {}, Constructors: {}};
+  Messages.IDS = {
+    CONFIGURATIONSTATUSLIST: "CONFIGURATIONSTATUSLIST",
+    SERVLET_ERROR: "SERVLET_ERROR",
+    CLIENTCLOSE: "CLIENTCLOSE",
+    LOGOUT: "LOGOUT",
+    MEASURAND_SUBSCRIBE_REQUEST: "MEASURAND_SUBSCRIBE_REQUEST",
+    MEASURAND_DESUBSCRIBE_REQUEST: "MEASURAND_DESUBSCRIBE_REQUEST",
+    MEASURAND_ATTRIBUTE_UPDATE: "MEASURAND_ATTRIBUTE_UPDATE",
+    DOM_FILE_REQUEST: "DOM_FILE_REQUEST",
+    FILE_LIST_REQUEST: "FILE_LIST_REQUEST",
+    FILE_LIST_RESPONSE: "FILE_LIST_RESPONSE",
+    HISTORY_RETREIVAL_REQUEST: "HISTORY_RETREIVAL_REQUEST",
+    FILE_UPDATE_MESSAGE: "FILE_UPDATE_MESSAGE",
+    RTL_INIT_REQUEST: "RTL_INIT_REQUEST",
+    RTL_UPDATE: "RTL_UPDATE",
+    FSW_INIT_REQUEST: "FSW_INIT_REQUEST",
+    FSW_UPDATE: "FSW_UPDATE",
+    CECIL_PROC_OUTPUT_UPDATE: "CECIL_PROC_OUTPUT_UPDATE",
+    CECIL_PROC_STATUS_UPDATE: "CECIL_PROC_STATUS_UPDATE",
+    CECIL_KEYPRESS_UPDATE: "CECIL_KEYPRESS_UPDATE",
+    CECIL_INIT_REQUEST: "CECIL_INIT_REQUEST",
+    CECIL_LINE_STATUS_UPDATE: "CECIL_LINE_STATUS_UPDATE",
+    CECIL_STOP_REQUEST: "CECIL_STOP_REQUEST",
+    TRANSPORT_INTERRUPTED: "TRANSPORT_INTERRUPTED",
+    TRANSPORT_INTERRUPTED_STP: "TRANSPORT_INTERRUPTED_STP"
+  };
+  Messages.Constructors = {
+    CONFIGURATIONSTATUSLIST: function (URL, mdata, mreplyto) {
+      var reply = "";
+      if (mreplyto)
+        reply = mreplyto;
+      return {
+        id: Messages.IDS.CONFIGURATIONSTATUSLIST,
+        destination: URL,
+        replyTo: reply,
+        configurations: mdata
+      };
+    },
+    SERVLET_ERROR: function (URL, errorCode, messageText, mreplyto) {
+      var reply = "";
+      if (mreplyto)
+        reply = mreplyto;
+      else
+        reply = clientID;
+
+      return {
+        id: Messages.IDS.SERVLET_ERROR,
+        destination: URL,
+        replyTo: reply,
+        _myMessage: messageText,
+        _myErrorCode: errorCode
+      };
+    },
+    CLIENTCLOSEMESSAGE: function (URL, mreplyto) {
+      var reply = "";
+      if (mreplyto)
+        reply = mreplyto;
+      else
+        reply = Infrastructure.clientID;
+      return {
+        id: Messages.IDS.CLIENTCLOSE,
+        destination: URL,
+        replyTo: reply,
+        clientID: Infrastructure.clientID
+      };
+    },
+    LOGOUTMESSAGE: function (URL, mreplyto) {
+      var reply = "";
+      if (mreplyto)
+        reply = mreplyto;
+      else
+        reply = Infrastructure.clientID;
+      return {
+        id: Messages.IDS.LOGOUT,
+        destination: URL,
+        replyTo: reply,
+        clientID: Infrastructure.clientID
+      };
+    },
+    RtlInitRequest: function (URL, mreplyto) {
+      var reply = "";
+      if (mreplyto)
+        reply = mreplyto;
+      else
+        reply = Infrastructure.clientID;
+      return {
+        id: Messages.IDS.RTL_INIT_REQUEST,
+        destination: URL,
+        replyTo: reply
+      };
+    },
+    FswInitRequest: function (URL, mreplyto) {
+      var reply = "";
+      if (mreplyto)
+        reply = mreplyto;
+      else
+        reply = Infrastructure.clientID;
+      return {
+        id: Messages.IDS.FSW_INIT_REQUEST,
+        destination: URL,
+        replyTo: reply
+      };
+    },
+    CecilInitRequest: function (URL, mreplyto, instanceType, instanceNum) {
+      var reply = "";
+      if (mreplyto)
+        reply = mreplyto;
+      else
+        reply = Infrastructure.clientID;
+      return {
+        id: Messages.IDS.CECIL_INIT_REQUEST,
+        destination: URL,
+        replyTo: reply,
+        instanceType: instanceType,
+        instanceNum: instanceNum
+      };
+    },
+    CecilStopRequest: function (URL, mreplyto, instanceType, instanceNum) {
+      var reply = "";
+      if (mreplyto)
+        reply = mreplyto;
+      else
+        reply = Infrastructure.clientID;
+      return {
+        id: Messages.IDS.CECIL_STOP_REQUEST,
+        destination: URL,
+        replyTo: reply,
+        instanceType: instanceType,
+        instanceNum: instanceNum
+      };
+    },
+    FileListRequest: function (URL, mreplyto, type, path) {
+      var reply = "";
+      if (mreplyto)
+        reply = mreplyto;
+      else
+        reply = Infrastructure.clientID;
+      return {
+        id: Messages.IDS.FILE_LIST_REQUEST,
+        destination: URL,
+        replyTo: reply,
+        type: type,
+        path: path
+      };
+    },
+    DomFileRequest: function (URL, mreplyto, type, file, dir) {
+      var reply = "";
+      if (mreplyto)
+        reply = mreplyto;
+      else
+        reply = Infrastructure.clientID;
+      return {
+        id: Messages.IDS.DOM_FILE_REQUEST,
+        destination: URL,
+        replyTo: reply,
+        type: type,
+        file: file,
+        dir: dir
+      };
+    },
+
+    MeasurandSubscribeRequest: function (URL, mreplyto, measurands) {
+      var reply = "";
+      if (mreplyto)
+        reply = mreplyto;
+      else
+        reply = Infrastructure.clientID;
+      return {
+        clientId: Infrastructure.clientID,
+        id: Messages.IDS.MEASURAND_SUBSCRIBE_REQUEST,
+        destination: URL,
+        replyTo: reply,
+        measurandIds: measurands
+      };
+    },
+    MeasurandDeSubscribeRequest: function (URL, mreplyto, measurands) {
+      var reply = "";
+      if (mreplyto)
+        reply = mreplyto;
+      else
+        reply = Infrastructure.clientID;
+      return {
+        clientId: Infrastructure.clientID,
+        id: Messages.IDS.MEASURAND_DESUBSCRIBE_REQUEST,
+        destination: URL,
+        replyTo: reply,
+        measurandIds: measurands
+      };
+    },
+    MeasurandAttributeUpdates: function (URL, mreplyto, myupdates) {
+      var reply = "";
+      if (mreplyto)
+        reply = mreplyto;
+      else
+        reply = Infrastructure.clientID;
+      return {
+        clientId: Infrastructure.clientID,
+        id: Messages.IDS.MEASURAND_ATTRIBUTE_UPDATE,
+        destination: URL,
+        replyTo: reply,
+        updates: myupdates
+      };//updates of the form {id:, attributeName:, attributeValue:  status:}
+    },
+    HistoryRetrievalRequestMessage: function (URL, mreplyto, mytype, myattributes) {
+      var reply = "";
+      if (mreplyto)
+        reply = mreplyto;
+      else
+        reply = Infrastructure.clientID;
+      return {
+        clientId: Infrastructure.clientID,
+        id: Messages.IDS.HISTORY_RETREIVAL_REQUEST,
+        destination: URL,
+        replyTo: reply,
+        type: mytype,
+        attributes: myattributes
+      };//updates of the form {id:, attributeName:, attributeValue:  status:}
+    }
+  };
+
   /**
    * Message Constructors
    * NOTE: By calling this method you will new an object
@@ -789,200 +929,6 @@
    * @return            new Message
    * @author            Michael Dehmlow
    */
-  Infrastructure.Messages.Constructors =
-    {
-      CONFIGURATIONSTATUSLIST: function (URL, mdata, mreplyto) {
-        var reply = "";
-        if (mreplyto)
-          reply = mreplyto;
-        return {
-          id: Infrastructure.Messages.IDS.CONFIGURATIONSTATUSLIST,
-          destination: URL,
-          replyTo: reply,
-          configurations: mdata
-        };
-      },
-      SERVLET_ERROR: function (URL, errorCode, messageText, mreplyto) {
-        var reply = "";
-        if (mreplyto)
-          reply = mreplyto;
-        else
-          reply = Infrastructure.clientID;
-
-        return {
-          id: Infrastructure.Messages.IDS.SERVLET_ERROR,
-          destination: URL,
-          replyTo: reply,
-          _myMessage: messageText,
-          _myErrorCode: errorCode
-        };
-      },
-      CLIENTCLOSEMESSAGE: function (URL, mreplyto) {
-        var reply = "";
-        if (mreplyto)
-          reply = mreplyto;
-        else
-          reply = Infrastructure.clientID;
-        return {
-          id: Infrastructure.Messages.IDS.CLIENTCLOSE,
-          destination: URL,
-          replyTo: reply,
-          clientID: Infrastructure.clientID
-        };
-      },
-      LOGOUTMESSAGE: function (URL, mreplyto) {
-        var reply = "";
-        if (mreplyto)
-          reply = mreplyto;
-        else
-          reply = Infrastructure.clientID;
-        return {
-          id: Infrastructure.Messages.IDS.LOGOUT,
-          destination: URL,
-          replyTo: reply,
-          clientID: Infrastructure.clientID
-        };
-      },
-      RtlInitRequest: function (URL, mreplyto) {
-        var reply = "";
-        if (mreplyto)
-          reply = mreplyto;
-        else
-          reply = Infrastructure.clientID;
-        return {
-          id: Infrastructure.Messages.IDS.RTL_INIT_REQUEST,
-          destination: URL,
-          replyTo: reply
-        };
-      },
-      FswInitRequest: function (URL, mreplyto) {
-        var reply = "";
-        if (mreplyto)
-          reply = mreplyto;
-        else
-          reply = Infrastructure.clientID;
-        return {
-          id: Infrastructure.Messages.IDS.FSW_INIT_REQUEST,
-          destination: URL,
-          replyTo: reply
-        };
-      },
-      CecilInitRequest: function (URL, mreplyto, instanceType, instanceNum) {
-        var reply = "";
-        if (mreplyto)
-          reply = mreplyto;
-        else
-          reply = Infrastructure.clientID;
-        return {
-          id: Infrastructure.Messages.IDS.CECIL_INIT_REQUEST,
-          destination: URL,
-          replyTo: reply,
-          instanceType: instanceType,
-          instanceNum: instanceNum
-        };
-      },
-      CecilStopRequest: function (URL, mreplyto, instanceType, instanceNum) {
-        var reply = "";
-        if (mreplyto)
-          reply = mreplyto;
-        else
-          reply = Infrastructure.clientID;
-        return {
-          id: Infrastructure.Messages.IDS.CECIL_STOP_REQUEST,
-          destination: URL,
-          replyTo: reply,
-          instanceType: instanceType,
-          instanceNum: instanceNum
-        };
-      },
-      FileListRequest: function (URL, mreplyto, type, path) {
-        var reply = "";
-        if (mreplyto)
-          reply = mreplyto;
-        else
-          reply = Infrastructure.clientID;
-        return {
-          id: Infrastructure.Messages.IDS.FILE_LIST_REQUEST,
-          destination: URL,
-          replyTo: reply,
-          type: type,
-          path: path
-        };
-      },
-      DomFileRequest: function (URL, mreplyto, type, file, dir) {
-        var reply = "";
-        if (mreplyto)
-          reply = mreplyto;
-        else
-          reply = Infrastructure.clientID;
-        return {
-          id: Infrastructure.Messages.IDS.DOM_FILE_REQUEST,
-          destination: URL,
-          replyTo: reply,
-          type: type,
-          file: file,
-          dir: dir
-        };
-      },
-
-      MeasurandSubscribeRequest: function (URL, mreplyto, measurands) {
-        var reply = "";
-        if (mreplyto)
-          reply = mreplyto;
-        else
-          reply = Infrastructure.clientID;
-        return {
-          clientId: Infrastructure.clientID,
-          id: Infrastructure.Messages.IDS.MEASURAND_SUBSCRIBE_REQUEST,
-          destination: URL,
-          replyTo: reply,
-          measurandIds: measurands
-        };
-      },
-      MeasurandDeSubscribeRequest: function (URL, mreplyto, measurands) {
-        var reply = "";
-        if (mreplyto)
-          reply = mreplyto;
-        else
-          reply = Infrastructure.clientID;
-        return {
-          clientId: Infrastructure.clientID,
-          id: Infrastructure.Messages.IDS.MEASURAND_DESUBSCRIBE_REQUEST,
-          destination: URL,
-          replyTo: reply,
-          measurandIds: measurands
-        };
-      },
-      MeasurandAttributeUpdates: function (URL, mreplyto, myupdates) {
-        var reply = "";
-        if (mreplyto)
-          reply = mreplyto;
-        else
-          reply = Infrastructure.clientID;
-        return {
-          clientId: Infrastructure.clientID,
-          id: Infrastructure.Messages.IDS.MEASURAND_ATTRIBUTE_UPDATE,
-          destination: URL,
-          replyTo: reply,
-          updates: myupdates
-        };//updates of the form {id:, attributeName:, attributeValue:  status:}
-      },
-      HistoryRetrievalRequestMessage: function (URL, mreplyto, mytype, myattributes) {
-        var reply = "";
-        if (mreplyto)
-          reply = mreplyto;
-        else
-          reply = Infrastructure.clientID;
-        return {
-          clientId: Infrastructure.clientID,
-          id: Infrastructure.Messages.IDS.HISTORY_RETREIVAL_REQUEST,
-          destination: URL,
-          replyTo: reply,
-          type: mytype,
-          attributes: myattributes
-        };//updates of the form {id:, attributeName:, attributeValue:  status:}
-      }
-    };
 
   /**
    * Exception Singletons
@@ -994,11 +940,64 @@
    * @return            Exception Object
    * @author            Michael Dehmlow
    */
+  var Exceptions = {
+    UNKNOWNERROR:
+      {
+        errorText: "Unknown Error",
+        toString: function () {
+          return "Unknown Error";
+        },
+        errorCode: Errors.UNKNOWNERROR
+      },
+    JSONERROR:
+      {
+        errorText: "JSON Converstion Error!",
+        toString: function () {
+          return "JSON Converstion Error!";
+        },
+        errorCode: Errors.JSONERROR
+      },
+    UNDEFINEDMESSAGE:
+      {
+        errorText: "Undefined Message Type!",
+        toString: function () {
+          return "Undefined Message Type!";
+        },
+        errorCode: Errors.UNDEFINEDMESSAGE
+      },
+    NODATA:
+      {
+        errorText: "Data Field was empty!",
+        toString: function () {
+          return "Data Field was empty!";
+        },
+        errorCode: Errors.NODATA
+      },
+    INVALIDMESSAGEFORMAT:
+      {
+        errorText: "Invalid Message Format!",
+        toString: function () {
+          return "Invalid Message Format!";
+        },
+        errorCode: Errors.INVALIDMESSAGEFORMAT
+      },
+    DISCONNECTION:
+      {
+        errorText: "The connection to the server has been lost! No further Updates will be Processed.",
+        toString: function () {
+          return "The connection to the server has been lost! No further Updates will be Processed.";
+        },
+        errorCode: Errors.INVALIDMESSAGEFORMAT
+      }
+  };
 
 // Just return a value to define the module export.
 // This example returns an object, but the module
 // can return a function as the exported value.
   return {
+    infrastructure: new Infrastructure(),
     Infrastructure: Infrastructure,
+    Messages: Messages,
+    Exceptions: Exceptions
   };
 }));

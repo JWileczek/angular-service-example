@@ -7,7 +7,7 @@
 <body>
 <script type="text/javascript" src="amq/amq.js"></script>
 <script type="text/javascript">amq.uri = 'amq/';</script>
-<script type="text/javascript" src="./newInfra.js"></script>
+<script type="text/javascript" src="./classInfra.js"></script>
 <script type="text/javascript" src="js/prototype.js"></script>
 <script type="text/javascript">
   //bigtest
@@ -15,7 +15,7 @@
 
   function bigtest() {
     console("Testing Method funtionality<br>");
-    Infrastructure.addPollHandler(function () {
+    Infrastructure.infrastructure.addPollHandler(function () {
       flipflop = 1 - flipflop;
       if ((flipflop) == 0) {
         document.getElementById("pollstatus").style.background = "green";
@@ -81,9 +81,9 @@ Poll status Used for Big Test:
 </div>
 
 <script type="text/javascript">
-  Infrastructure.debug = true;
-  Infrastructure.setErrorHandler(console);
-  Infrastructure.setListener(Infrastructure.Messages.IDS.CONFIGURATIONSTATUSLIST, Infrastructure.Topics.CONFIGURATION_STATUS_UPDATE, reverseJson);
+  Infrastructure.infrastructure.debug = true;
+  Infrastructure.infrastructure.setErrorHandler(console);
+  Infrastructure.infrastructure.setListener(Infrastructure.Messages.IDS.CONFIGURATIONSTATUSLIST, Infrastructure.infrastructure.Topics().CONFIGURATION_STATUS_UPDATE, reverseJson);
   Infrastructure.initialize("stp/s", reverseJson);
 
 
@@ -115,7 +115,7 @@ Poll status Used for Big Test:
     var dataText = get("data");
     console("Sending: dest:" + dest + " id:" + id + " reply:" + reply + " data:" + dataText);
     try {
-      Infrastructure.sendMessage({"destination": dest, "id": id, "reply": reply}, true, console);
+      Infrastructure.infrastructure.sendMessage({"destination": dest, "id": id, "reply": reply}, true, console);
     } catch (e) {
       console("Error: " + e + "  <br>Error Code: " + e.errorCode);
     }
@@ -149,7 +149,7 @@ Poll status Used for Big Test:
 
   function unitTest() {
     console("Testing Pollhandler Through out test poll status should flip flop on polls");
-    Infrastructure.addPollHandler(function () {
+    Infrastructure.infrastructure.addPollHandler(function () {
       flipflop = 1 - flipflop;
       if ((flipflop) == 0) {
         document.getElementById("pollstatus").style.background = "green";
@@ -158,7 +158,7 @@ Poll status Used for Big Test:
       }
     });
 
-    var a = Infrastructure._evaluate("{id:'goodid',data:'data'}");
+    var a = Infrastructure.infrastructure._evaluate("{id:'goodid',data:'data'}");
 
     if (a.id == "goodid" && a.data == "data") {
       console("Test Successful");
