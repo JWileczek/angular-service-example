@@ -1,6 +1,6 @@
-import {MessageFactory, Messages} from "./messages.js";
+import * as Messages from "./messages.js";
 
-export {Messages, MessageFactory} from "./messages.js";
+export {Messages}
 
 // Utility function to fully freeze potentially nested enums.
 function deepFreeze(object) {
@@ -219,7 +219,7 @@ export class Infrastructure {
    */
   _sendMessage(id, destination, jsontext, callback, reply, noEval) {
 
-    if (Messages.LOGOUT == id) {
+    if (Messages.IDS.LOGOUT == id) {
       this.LoggedOut = true;
     }
 
@@ -274,7 +274,7 @@ export class Infrastructure {
    * @throws          Sync Error/Async Error
    */
   _sendSyncMessage(id, destination, jsontext, callback, reply, noEval) {
-    if (Messages.LOGOUT == id) {
+    if (Messages.IDS.LOGOUT == id) {
       this.LoggedOut = true;
     }
 
@@ -397,7 +397,7 @@ export class Infrastructure {
     var self = this;
     var evaluatedHandler = function (message) {
       var msgObj = self._evaluate(message);
-      if (msgObj.id == Messages.SERVLET_ERROR) {
+      if (msgObj.id == Messages.IDS.SERVLET_ERROR) {
         self.stop();
       }
       handler(msgObj);
@@ -429,10 +429,7 @@ export class Infrastructure {
     }
     for (var i = 0; i < this.initialized.length; i++) {
       //Note that the id does not matter in this case only the topic
-      var m = MessageFactory.create(Messages.CLIENTCLOSE, {
-        destination: this.initialized[i],
-        replyTo: this.clientID
-      });
+      var m = new Messages.ClientCloseMsg(this.initialized[i], this.clientID);
       this.sendMessage(m, true, (function () {
       }));
     }
@@ -475,7 +472,7 @@ export class Infrastructure {
 
     this.errorHandler = function (e) {
       if (e == null) {
-        var error;
+        var error = {};
         error.errorCode = 0;
         error.errorText = "Unknown Error";
         try {
@@ -603,14 +600,9 @@ export class Infrastructure {
    */
   RequestFileList(servletURL, callback, type, path) {
 
-    var m = MessageFactory.create(Messages.FILE_LIST_REQUEST, {
-      destination: servletURL,
-      replyTo: this.clientID,
-      type: type,
-      path: path
-    });
+    var m = new Messages.FileListRequestMsg(servletURL, this.clientID, type, path);
     this.sendMessage(m, true, function (r) {
-      if (r.id == Messages.IDS.FILE_LIST_RESPONSE) {
+      if (r.id == Messages.IDS.IDS.FILE_LIST_RESPONSE) {
         callback(r.fileList);
       } else {
         throw r;
@@ -619,10 +611,7 @@ export class Infrastructure {
   }
 
   RtlInitRequest(servletURL, callback) {
-    var m = MessageFactory.create(Messages.RTL_INIT_REQUEST, {
-      destination: servletURL,
-      replyTo: this.clientID,
-    });
+    var m = new Messages.RtlInitRequestMsg(servletURL, this.clientID);
     this.sendMessage(m, true, function (r) {
       if (r.id == Messages.IDS.RTL_UPDATE) {
         callback(r);
@@ -633,10 +622,7 @@ export class Infrastructure {
   }
 
   FswInitRequest(servletURL, callback) {
-    var m = MessageFactory.create(Messages.FSW_INIT_REQUEST, {
-      destination: servletURL,
-      replyTo: this.clientID
-    });
+    var m = new Messages.FswInitRequestMsg(servletURL, this.clientID);
     this.sendMessage(m, true, function (r) {
       if (r.id == Messages.IDS.FSW_UPDATE) {
         callback(r);
@@ -647,24 +633,13 @@ export class Infrastructure {
   }
 
   CecilInitRequest(servletURL, instanceType, instanceNum) {
-    var m = MessageFactory.create(Messages.CECIL_INIT_REQUEST, {
-      destination: servletURL,
-      replyTo: this.clientID,
-      instanceType: instanceType,
-      instanceNum: instanceNum
-    });
+    var m = new Messages.CecilInitRequestMsg(servletURL, this.clientID, instanceType, instanceNum);
     this.sendMessage(m, false, function (r) {
     });
   }
 
   CecilStopRequest(servletURL, instanceType, instanceNum) {
-
-    var m = MessageFactory.create(Messages.CECIL_STOP_REQUEST, {
-      destination: servletURL,
-      replyTo: this.clientID,
-      instanceType: instanceType,
-      instanceNum: instanceNum
-    });
+    var m = new Messages.CecilStopRequestMsg(servletURL, this.clientID, instanceType, instanceNum);
     this.sendMessage(m, false, function (r) {
     });
   }
@@ -722,13 +697,7 @@ export class Infrastructure {
     }
     var filename_clean = encodeURIComponent(filename);
 
-    var m = MessageFactory.create(Messages.DOM_FILE_REQUEST, {
-      destination: servletURL,
-      replyTo: this.clientID,
-      type: type,
-      file: filename_clean,
-      dir: dir
-    });
+    var m = Messages.DomFileRequestMsg(servletURL, this.clientID, type, filename_clean, dir);
     var self = this;
     var breakpointcallback = function (m) {
       try {
@@ -765,4 +734,16 @@ export class Infrastructure {
   }
 
 }
+
+// Handles the global use-case for Infrastructure class. Module code is only run once during first import of the module
+// regardless of how many times it is imported. Other global libraries like D3 and lodash follow this same pattern.
+export const infrastructure = new Infrastructure();
+window.Infrastructure = {
+  Messages,
+  Infrastructure,
+  infrastructure,
+  Errors,
+  Exceptions
+};
+//window.infrastructure = infrastructure;
 

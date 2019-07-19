@@ -10,7 +10,6 @@ import {InfrastructureService} from '../../services/Infrastructure/infrastructur
 export class EagerMsgComponent implements OnInit {
   private randomMsg: string;
   infraClientID: string;
-
   constructor(private randomMessageService: RandomMsgService, private infrastructure: InfrastructureService) {
   }
 

@@ -5,24 +5,36 @@
   <title>Insert title here</title>
 </head>
 <body>
-<script type="module" src="./refactorInfra.js">
-</script>
+<script type="text/javascript" src="amq/amq.js"></script>
+<script type="text/javascript">amq.uri = 'amq/';</script>
+<script type="module" src="./refactorInfra.js"></script>
 <script type="module">
-  import {MessageFactory, Messages} from "./refactorInfra.js";
+  // Module scoped code is only run once on first import.
+  // All other imports to the same module will reference the first imported module.
 
-  const m = MessageFactory.create(Messages.CONFIGURATIONSTATUSLIST, {
-    destination: "Somewhere",
-    replyTo: "Someone",
-    configurations: "SomeConfiguration"
-  });
-  console.log(m);
+  // Can import module as a whole with alias or individual pieces like below.
+  // import {Errors, Exceptions, Infrastructure} from './refactorInfra.js'
+  // import {ServletErrorMsg} from './messages.js'
+  // ***NOTE**: Extension on js modules is essential on import! from './refactorInfra' will cause errors
+  //import * as Infrastructure from "./refactorInfra.js";
+
+  // Two ways of handling global object creation. Within module itself (current impl), or attaching to window here.
+  // window.infrastructure = new Infrastructure.Infrastructure();
+  import * as Infrastructure from './refactorInfra.js';
+
+  const err = new Infrastructure.Messages.ServletErrorMsg("SomewhereNice", "Here", "Work", "I'm working");
+  console.log("Sample class constructed ServletErrorMsg: ", err);
+
   //bigtest
-  var flipflop = 1;
+  window.flipflop = 1;
 
-  function bigtest() {
-    console("Testing Method funtionality<br>");
+  // Functions defined in module blocks are only available to module scope.
+  // To use a function outside embed it on window like old
+  // text/javascript would on declaration. This function is redefined by the script block below.
+  window.bigTest = function () {
+    this.console("Testing Method funtionality<br>");
     Infrastructure.infrastructure.addPollHandler(function () {
-      flipflop = 1 - flipflop;
+      this.flipflop = 1 - this.flipflop;
       if ((flipflop) == 0) {
         document.getElementById("pollstatus").style.background = "green";
       } else {
@@ -31,10 +43,11 @@
 
     });
 
-    console("AddPollHandler... verify  green red flip-flop<br>");
-    console("Testing Method funtionality<br>");
-    console("Testing Method funtionality<br>");
+    this.console("AddPollHandler... verify  green red flip-flop<br>");
+    this.console("Testing Method funtionality<br>");
+    this.console("Testing Method funtionality<br>");
   }
+
 </script>
 
 <table>
@@ -87,18 +100,24 @@ Poll status Used for Big Test:
 </div>
 
 <script type="module">
+  import * as Infrastructure from './refactorInfra.js';
+
+  var console = (text) => {
+    document.getElementById("console").innerHTML += text + "<br>";
+  };
+  // Expose console function to global window.
+  window.console = console;
+
   Infrastructure.infrastructure.debug = true;
   Infrastructure.infrastructure.setErrorHandler(console);
   Infrastructure.infrastructure.setListener(Infrastructure.Messages.IDS.CONFIGURATIONSTATUSLIST, Infrastructure.infrastructure.Topics().CONFIGURATION_STATUS_UPDATE, reverseJson);
-  Infrastructure.initialize("stp/s", reverseJson);
-
-  var newInfra = new Infrastructure.Infrastructure();
+  Infrastructure.infrastructure.initialize("stp/s", reverseJson);
 
   function reverseJson(obj) {
     console(Object.toJSON(obj));
   }
 
-  function sendMessage() {
+  window.sendMessage = function () {
     var tester = {
       id: 'CONFIGURATIONSTATUSLIST',
       destination: 'ECLIPSE.CCTS.ConfigStatus.ConfigurationList',
@@ -114,7 +133,7 @@ Poll status Used for Big Test:
         area: 'null',
         phase: 'null'
       }]
-    }
+    };
     console(Object.toJSON(tester));
     var dest = get("dest");
     var id = get("messID");
@@ -126,19 +145,14 @@ Poll status Used for Big Test:
     } catch (e) {
       console("Error: " + e + "  <br>Error Code: " + e.errorCode);
     }
-  }
-
+  };
 
   function get(textBoxName) {
     var myElement = document.getElementById(textBoxName);
     return myElement.value;
   }
 
-  function console(text) {
-    document.getElementById("console").innerHTML += text + "<br>";
-  }
-
-  function myevaluate() {
+  window.myevaluate = function () {
     try {
       console("s:" + document.getElementById("evalBox").value + ":e");
       var a = eval(document.getElementById("evalBox").value);
@@ -146,7 +160,7 @@ Poll status Used for Big Test:
     } catch (e) {
       console(e);
     }
-  }
+  };
 
   var count = 0;
 
@@ -157,7 +171,7 @@ Poll status Used for Big Test:
   function unitTest() {
     console("Testing Pollhandler Through out test poll status should flip flop on polls");
     Infrastructure.infrastructure.addPollHandler(function () {
-      flipflop = 1 - flipflop;
+      window.flipflop = 1 - window.flipflop;
       if ((flipflop) == 0) {
         document.getElementById("pollstatus").style.background = "green";
       } else {
@@ -195,7 +209,7 @@ Poll status Used for Big Test:
     return true;
   }
 
-  function bigTest() {
+  window.bigTest = function () {
     console("clearing console");
     alert("clearing console");
     //Unit test of all methods
@@ -214,7 +228,7 @@ Poll status Used for Big Test:
     console("<h2>Running disconnect handler test</h2>");
     dissconnectTest();
 
-  }
+  };
 
 </script>
 </body>

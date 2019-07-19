@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {RandomMsgService} from '../../services/random-message.service';
-import {Infrastructure} from '../../simple-infrastructure/newInfra';
+import {Infrastructure} from '../../simple-infrastructure/refactorInfra';
 
 @Component({
   selector: 'app-lazy-msg',
@@ -14,8 +14,8 @@ export class LazyMsgComponent implements OnInit {
   lazyInfra;
   lazyClientID;
   constructor(private randomMsgService: RandomMsgService) {
-    this.lazyInfra = Object.create(Infrastructure);
-    this.lazyInfra.initInfrastucture('LazyPath', 'LazySession', 'LazyProgram');
+    this.lazyInfra = new Infrastructure();
+    this.lazyInfra.initInfrastructure('LazyPath', 'LazySession', 'LazyProgram');
     this.randomMsg = randomMsgService.getMessage();
     this.lazyClientID = this.lazyInfra.clientID;
   }
