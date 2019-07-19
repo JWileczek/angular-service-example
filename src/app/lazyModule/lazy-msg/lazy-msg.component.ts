@@ -11,8 +11,8 @@ import {Infrastructure} from '../../simple-infrastructure/refactorInfra';
 export class LazyMsgComponent implements OnInit {
 
   randomMsg = 'Default Message';
-  lazyInfra;
-  lazyClientID;
+  lazyInfra: Infrastructure;
+  lazyClientID: string;
   constructor(private randomMsgService: RandomMsgService) {
     this.lazyInfra = new Infrastructure();
     this.lazyInfra.initInfrastructure('LazyPath', 'LazySession', 'LazyProgram');
