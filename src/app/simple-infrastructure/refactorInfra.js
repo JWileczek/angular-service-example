@@ -745,5 +745,7 @@ window.Infrastructure = {
   Errors,
   Exceptions
 };
+
+// Alternatively just expose global variable to window.
 //window.infrastructure = infrastructure;
 
