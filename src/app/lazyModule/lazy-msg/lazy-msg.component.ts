@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {RandomMsgService} from '../../services/random-message.service';
 import {Infrastructure} from '../../simple-infrastructure/refactorInfra';
 
+//import * as Infrastructure from '../../simple-infrastructure/refactorInfra';
+
 @Component({
   selector: 'app-lazy-msg',
   templateUrl: './lazy-msg.component.html',
