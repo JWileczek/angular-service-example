@@ -111,7 +111,7 @@ Poll status Used for Big Test:
 
   Infrastructure.infrastructure.debug = true;
   Infrastructure.infrastructure.setErrorHandler(console);
-  Infrastructure.infrastructure.setListener(Infrastructure.Messages.IDS.CONFIGURATIONSTATUSLIST, Infrastructure.infrastructure.Topics().CONFIGURATION_STATUS_UPDATE, reverseJson);
+  Infrastructure.infrastructure.setListener(Infrastructure.Messages.IDS.CONFIGURATIONSTATUSLIST, Infrastructure.infrastructure.Topics.CONFIGURATION_STATUS_UPDATE, reverseJson);
   Infrastructure.infrastructure.initialize("stp/s", reverseJson);
 
   function reverseJson(obj) {

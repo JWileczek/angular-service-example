@@ -115,30 +115,34 @@ export class DomFileRequestMsg extends Message {
 }
 
 export class MeasurandSubscribeRequestMsg extends Message {
-  constructor(destination, replyTo, measurands) {
+  constructor(destination, replyTo, measurands, clientID) {
     super(IDS.MEASURAND_SUBSCRIBE_REQUEST, destination, replyTo);
     this.measurands = measurands;
+    this.clientID = clientID;
   }
 }
 
 export class MeasurandDeSubscribeRequestMsg extends Message {
-  constructor(destination, replyTo, measurands) {
+  constructor(destination, replyTo, measurands, clientID) {
     super(IDS.MEASURAND_DESUBSCRIBE_REQUEST, destination, replyTo);
     this.measurands = measurands;
+    this.clientID = clientID;
   }
 }
 
 export class MeasurandAttributeUpdatesMsg extends Message {
   constructor(destination, replyTo, myupdates) {
-    super(IDS.MEASURAND_ATTRIBUTE_UPDATE, destination, replyTo);
+    super(IDS.MEASURAND_ATTRIBUTE_UPDATE, destination, replyTo, clientID);
     this.myupdates = myupdates;
+    this.clientID = clientID;
   }
 }
 
 export class HistoryRetrievalRequestMsg extends Message {
-  constructor(destination, replyTo, mytype, myattributes) {
+  constructor(destination, replyTo, mytype, myattributes, clientID) {
     super(IDS.HISTORY_RETREIVAL_REQUEST, destination, replyTo);
     this.mytype = mytype;
     this.myattributes = myattributes;
+    this.clientID = clientID;
   }
 }

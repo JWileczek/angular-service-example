@@ -718,8 +718,7 @@ export class Infrastructure {
     this.sendMessage(m, true, breakpointcallback, true);
   }
 
-  //CHANGE: Difference in access
-  Topics() {
+  get Topics() {
     var ROOT = "ECLIPSE";
     var PROGRAM_NAME = this.programName;
     var DELIM = ".";
