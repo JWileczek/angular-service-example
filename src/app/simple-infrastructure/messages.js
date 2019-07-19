@@ -26,30 +26,6 @@ export const IDS = {
 };
 Object.freeze(IDS);
 
-export const MessageFactory = {
-  _registeredTypes: new Map(),
-
-  register(messageID, messageClass) {
-    if (!(this._registeredTypes.has(messageID) && messageClass.prototype instanceof Message)) {
-      this._registeredTypes.set(messageID, messageClass);
-    } else {
-      console.log(`Class for messageID: ${messageID} already registered with Factory.`);
-    }
-  },
-
-  create(messageID, messagePayload) {
-    if (!this._registeredTypes.has(messageID)) {
-      console.error("Attempting to create undefined message!");
-      return null;
-    }
-    let clazz = this._registeredTypes.get(messageID);
-    return new clazz(...messagePayload);
-  },
-};
-// A sealed object can't have any properties/methods added or removed
-// Modifiable properties can still be used and changed however.
-Object.seal(MessageFactory);
-
 export class Message {
   constructor(id, destination, replyTo) {
     this.id = id;
@@ -81,13 +57,11 @@ export class ServletErrorMsg extends Message {
   }
 }
 
-
 export class ClientCloseMsg extends Message {
   constructor(destination, replyTo) {
     super(IDS.CLIENTCLOSE, destination, replyTo);
   }
 }
-
 
 export class LogoutMsg extends Message {
   constructor(destination, replyTo) {
@@ -95,20 +69,17 @@ export class LogoutMsg extends Message {
   }
 }
 
-
 export class RtlInitRequestMsg extends Message {
   constructor(destination, replyTo) {
     super(IDS.RTL_INIT_REQUEST, destination, replyTo);
   }
 }
 
-
 export class FswInitRequestMsg extends Message {
   constructor(destination, replyTo) {
     super(IDS.FSW_INIT_REQUEST, destination, replyTo);
   }
 }
-
 
 export class CecilInitRequestMsg extends Message {
   constructor(destination, replyTo, instanceType, instanceNum) {
@@ -118,7 +89,6 @@ export class CecilInitRequestMsg extends Message {
   }
 }
 
-
 export class CecilStopRequestMsg extends Message {
   constructor(destination, replyTo, instanceType, instanceNum) {
     super(IDS.CECIL_STOP_REQUEST, destination, replyTo);
@@ -127,7 +97,6 @@ export class CecilStopRequestMsg extends Message {
   }
 }
 
-
 export class FileListRequestMsg extends Message {
   constructor(destination, replyTo, type, path) {
     super(IDS.FILE_LIST_REQUEST, destination, replyTo);
@@ -135,7 +104,6 @@ export class FileListRequestMsg extends Message {
     this.path = path;
   }
 }
-
 
 export class DomFileRequestMsg extends Message {
   constructor(destination, replyTo, type, file, dir) {
@@ -146,14 +114,12 @@ export class DomFileRequestMsg extends Message {
   }
 }
 
-
 export class MeasurandSubscribeRequestMsg extends Message {
   constructor(destination, replyTo, measurands) {
     super(IDS.MEASURAND_SUBSCRIBE_REQUEST, destination, replyTo);
     this.measurands = measurands;
   }
 }
-
 
 export class MeasurandDeSubscribeRequestMsg extends Message {
   constructor(destination, replyTo, measurands) {
@@ -162,14 +128,12 @@ export class MeasurandDeSubscribeRequestMsg extends Message {
   }
 }
 
-
 export class MeasurandAttributeUpdatesMsg extends Message {
   constructor(destination, replyTo, myupdates) {
     super(IDS.MEASURAND_ATTRIBUTE_UPDATE, destination, replyTo);
     this.myupdates = myupdates;
   }
 }
-
 
 export class HistoryRetrievalRequestMsg extends Message {
   constructor(destination, replyTo, mytype, myattributes) {
@@ -178,19 +142,3 @@ export class HistoryRetrievalRequestMsg extends Message {
     this.myattributes = myattributes;
   }
 }
-
-
-MessageFactory.register(IDS.SERVLET_ERROR, ServletErrorMsg);
-MessageFactory.register(IDS.CLIENTCLOSE, ClientCloseMsg);
-MessageFactory.register(IDS.CONFIGURATIONSTATUSLIST, ConfigurationStatusListMsg);
-MessageFactory.register(IDS.RTL_INIT_REQUEST, RtlInitRequestMsg);
-MessageFactory.register(IDS.LOGOUT, LogoutMsg);
-MessageFactory.register(IDS.CECIL_INIT_REQUEST, CecilInitRequestMsg);
-MessageFactory.register(IDS.FSW_INIT_REQUEST, FswInitRequestMsg);
-MessageFactory.register(IDS.CECIL_STOP_REQUEST, CecilStopRequestMsg);
-MessageFactory.register(IDS.FILE_LIST_REQUEST, FileListRequestMsg);
-MessageFactory.register(IDS.DOM_FILE_REQUEST, DomFileRequestMsg);
-MessageFactory.register(IDS.MEASURAND_SUBSCRIBE_REQUEST, MeasurandSubscribeRequestMsg);
-MessageFactory.register(IDS.MEASURAND_DESUBSCRIBE_REQUEST, MeasurandDeSubscribeRequestMsg);
-MessageFactory.register(IDS.MEASURAND_ATTRIBUTE_UPDATE, MeasurandAttributeUpdatesMsg);
-MessageFactory.register(IDS.HISTORY_RETREIVAL_REQUEST, HistoryRetrievalRequestMsg);
