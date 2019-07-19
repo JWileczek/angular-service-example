@@ -5,11 +5,17 @@
   <title>Insert title here</title>
 </head>
 <body>
-<script type="text/javascript" src="amq/amq.js"></script>
-<script type="text/javascript">amq.uri = 'amq/';</script>
-<script type="text/javascript" src="./classInfra.js"></script>
-<script type="text/javascript" src="js/prototype.js"></script>
-<script type="text/javascript">
+<script type="module" src="./refactorInfra.js">
+</script>
+<script type="module">
+  import {MessageFactory, Messages} from "./refactorInfra.js";
+
+  const m = MessageFactory.create(Messages.CONFIGURATIONSTATUSLIST, {
+    destination: "Somewhere",
+    replyTo: "Someone",
+    configurations: "SomeConfiguration"
+  });
+  console.log(m);
   //bigtest
   var flipflop = 1;
 
@@ -80,12 +86,13 @@ Poll status Used for Big Test:
 
 </div>
 
-<script type="text/javascript">
+<script type="module">
   Infrastructure.infrastructure.debug = true;
   Infrastructure.infrastructure.setErrorHandler(console);
   Infrastructure.infrastructure.setListener(Infrastructure.Messages.IDS.CONFIGURATIONSTATUSLIST, Infrastructure.infrastructure.Topics().CONFIGURATION_STATUS_UPDATE, reverseJson);
   Infrastructure.initialize("stp/s", reverseJson);
 
+  var newInfra = new Infrastructure.Infrastructure();
 
   function reverseJson(obj) {
     console(Object.toJSON(obj));
