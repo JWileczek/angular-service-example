@@ -1,16 +1,17 @@
 import {Injectable} from '@angular/core';
-import {infrastructure} from '../../simple-infrastructure/refactorInfra';
+import {Infrastructure} from '../../simple-infrastructure/refactorInfra';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InfrastructureService {
-
+  infrastructure: Infrastructure = null;
   constructor() {
-    infrastructure.initInfrastructure('ServicePath', 'ServiceSession', 'ServiceProgram');
+    this.infrastructure = new Infrastructure();
+    this.infrastructure.initInfrastructure('ServicePath', 'ServiceSession', 'ServiceProgram');
   }
 
   get infrastructureObject() {
-    return infrastructure;
+    return this.infrastructure;
   }
 }

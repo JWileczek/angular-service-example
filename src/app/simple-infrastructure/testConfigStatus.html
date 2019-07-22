@@ -5,8 +5,13 @@
   <title>Insert title here</title>
 </head>
 <body>
-<script type="text/javascript" src="amq/amq.js"></script>
-<script type="text/javascript">amq.uri = 'amq/';</script>
+<script type="text/javascript" src="./js/amq_prototype_adapter.js"></script>
+<script type="text/javascript" src="./js/amq.js"></script>
+<script type="text/javascript">
+  var amq = org.activemq.Amq;
+  amq.uri = 'amq/';
+</script>
+<script type="text/javascript" src="./js/prototype.js"></script>
 <script type="module" src="./refactorInfra.js"></script>
 <script type="module">
   // Module scoped code is only run once on first import.
