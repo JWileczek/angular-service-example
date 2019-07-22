@@ -25,7 +25,11 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": [],
+            "scripts": [
+              "src/app/simple-infrastructure/js/amq_jquery_adapter.js",
+              "src/app/simple-infrastructure/js/jquery-1.4.2.min.js",
+              "src/app/simple-infrastructure/js/amq.js"
+            ],
             "es5BrowserSupport": true
           },
           "configurations": {
