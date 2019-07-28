@@ -6,6 +6,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {EagerModuleModule} from './eagerModule/eager-module.module';
 import {AppConfigService} from './app.config';
+import {SimpleProviderComponent} from './simple-provider/simple-provider.component';
 
 export function initializeApp(appConfig: AppConfigService) {
   return () => appConfig.load();
@@ -14,6 +15,7 @@ export function initializeApp(appConfig: AppConfigService) {
 @NgModule({
   declarations: [
     AppComponent,
+    SimpleProviderComponent,
   ],
   imports: [
     BrowserModule,

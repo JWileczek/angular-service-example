@@ -8,6 +8,14 @@ export enum StorageBackends {
   FS = 'fs',
 }
 
+// Import the core angular services.
+
+// ----------------------------------------------------------------------------------- //
+// ----------------------------------------------------------------------------------- //
+
+// I am the Dependency-Injection (DI) token for the Greeter collection.
+//export let BACKENDS = new InjectionToken<Greeter[]>( "Backend[] Multi Token" );
+
 const storageFactory = () => {
   const settings = AppConfigService.settings;
   const backendConfig = settings.backendConfigs[settings.defaultBackend];
