@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {ContextProvider} from '../services/ContextManager/ContextProvider';
-import {ContextManagerService} from '../services/ContextManager/ContextManager.service';
-import {Utils} from '../Utils';
-import {Context, ContextState} from '../services/ContextManager/Context';
+import {ContextProvider} from '../ContextProvider';
+import {ContextManagerService} from '../ContextManager.service';
+import {Utils} from '../../../Utils';
+import {Context, ContextState} from '../Context';
 
 interface SimpleData extends Context {
   readonly uniqueId: string;

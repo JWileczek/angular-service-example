@@ -6,7 +6,8 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {EagerModuleModule} from './eagerModule/eager-module.module';
 import {AppConfigService} from './app.config';
-import {SimpleProviderComponent} from './simple-provider/simple-provider.component';
+import {SimpleProviderComponent} from './services/ContextManager/simple-provider/simple-provider.component';
+import {SimpleConsumerComponent} from './services/ContextManager/simple-consumer/simple-consumer.component';
 
 export function initializeApp(appConfig: AppConfigService) {
   return () => appConfig.load();
@@ -16,6 +17,7 @@ export function initializeApp(appConfig: AppConfigService) {
   declarations: [
     AppComponent,
     SimpleProviderComponent,
+    SimpleConsumerComponent,
   ],
   imports: [
     BrowserModule,
